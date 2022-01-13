@@ -1,9 +1,16 @@
-import Head from 'next/head'
-// import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import Head from 'next/head';
+import styles from '../styles/Home.module.css';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
+import { GetStaticProps } from 'next';
 
-export default function Home({ launches }) {
+export default function Home({
+    launches
+  }: {
+    launches: {
+      id: string,
+      mission_name: number,
+    }[]
+  }) {
   console.log('launches', launches);
   return (
     <div className={styles.container}>
@@ -50,7 +57,7 @@ export default function Home({ launches }) {
   )
 }
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps = async () => {
   const client = new ApolloClient({
     uri: 'https://api.spacex.land/graphql/',
     cache: new InMemoryCache()
@@ -62,9 +69,9 @@ export async function getStaticProps() {
         launchesPast(limit: 10) {
           id
           mission_name
-          links {
-            flickr_images
-          }
+          # links {
+          #   flickr_images
+          # }
         }
       }
     `
