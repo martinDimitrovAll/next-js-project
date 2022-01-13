@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
+// import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
+import { GraphQLClient, gql } from 'graphql-request'
 import { GetStaticProps } from 'next';
 
 export default function Home({
@@ -58,24 +59,41 @@ export default function Home({
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const client = new ApolloClient({
-    uri: 'https://api.spacex.land/graphql/',
-    cache: new InMemoryCache()
-  });
+  //using apollo
+  // const client = new ApolloClient({
+  //   uri: 'https://api.spacex.land/graphql/',
+  //   cache: new InMemoryCache()
+  // });
 
-  const { data } = await client.query({
-    query: gql`
-      query GetLaunches {
-        launchesPast(limit: 10) {
-          id
-          mission_name
-          # links {
-          #   flickr_images
-          # }
-        }
+  // const { data } = await client.query({
+  //   query: gql`
+  //     query GetLaunches {
+  //       launchesPast(limit: 10) {
+  //         id
+  //         mission_name
+  //         # links {
+  //         #   flickr_images
+  //         # }
+  //       }
+  //     }
+  //   `
+  // });
+
+  //using graphql-request
+  const endpoint = 'https://api.spacex.land/graphql/';
+  const query = gql`
+    query GetLaunches {
+      launchesPast(limit: 10) {
+        id
+        mission_name
+        # links {
+        #   flickr_images
+        # }
       }
-    `
-  });
+    }
+  `;
+  const client = new GraphQLClient(endpoint, { headers: {} });
+  const data = await client.request(query);
   console.log(data);
   return {
     props: {
